@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException, Path, status
+from fastapi import FastAPI, HTTPException, Path, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -250,11 +250,18 @@ def update_note(
 # PUBLIC_INTERFACE
 def delete_note(
     note_id: str = Path(..., description="Note identifier."),
-) -> None:
+) -> Response:
     """Delete a note by id.
+
+    Notes:
+        For HTTP 204, FastAPI/Starlette requires that the response has no body.
+        We therefore return an explicit empty Response.
 
     Args:
         note_id: Note id.
+
+    Returns:
+        An empty Response with HTTP 204 status.
 
     Raises:
         HTTPException: 404 if note does not exist.
@@ -262,4 +269,4 @@ def delete_note(
     if note_id not in _NOTES:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Note not found")
     del _NOTES[note_id]
-    return None
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
