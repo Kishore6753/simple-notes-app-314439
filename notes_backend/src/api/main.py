@@ -108,6 +108,22 @@ def health_check() -> dict:
 
 
 @app.get(
+    "/health",
+    tags=["Health"],
+    summary="Health check (explicit)",
+    description="Explicit health endpoint (often used by readiness/liveness probes).",
+)
+# PUBLIC_INTERFACE
+def health_check_explicit() -> dict:
+    """Explicit health check endpoint.
+
+    Returns:
+        A JSON object indicating the service is healthy.
+    """
+    return {"message": "Healthy"}
+
+
+@app.get(
     "/notes",
     response_model=NotesListResponse,
     tags=["Notes"],
